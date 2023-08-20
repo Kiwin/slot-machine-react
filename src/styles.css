@@ -57,34 +57,59 @@ body {
 }
 
 .square {
-  background: #fff;
-  border: 1px solid #999;
+  background-color: #e9e9ed;
+  border: 1px dotted #999;
+  border-left: 2px solid #999;
+  border-right: 1px solid #999;
   float: left;
   font-size: 24px;
   font-weight: bold;
   line-height: 34px;
   height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
   padding: 0;
   text-align: center;
   width: 34px;
+
+  /*   margin-right: -1px;
+  margin-top: -1px; */
+}
+
+.square.active {
+  background: #fff;
+}
+
+.controls,
+.display > div {
+  margin-bottom: 10px;
+}
+.display > div.error {
+  background-color: lightcoral;
+}
+.display > div.warning {
+  background-color: orange;
+}
+.display > div.highlight {
+  background-color: gold;
 }
 
 .board-row:after {
   clear: both;
-  content: '';
+  content: "";
   display: table;
 }
 
-.status {
-  margin-bottom: 10px;
-}
-.game {
-  display: flex;
-  flex-direction: row;
+.prize-legend {
 }
 
-.game-info {
-  margin-left: 20px;
+.prize-legend-table {
+}
+
+.prize-legend-row-header > td {
+  border: 2px solid black;
+  text-align: center;
+}
+
+.prize-legend-row:not(:first-child) > td {
+  border-bottom: 1px dashed gray;
+  text-align: center;
 }
