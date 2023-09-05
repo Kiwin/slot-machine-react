@@ -1,5 +1,8 @@
 - [x] use useReducer instead of states in SlotMachine
-- [] add diagonal rewards
-- [] add multiple line rewards
-- [] create spin animations
+- [] add diagonal rewards.
+  - Reason: DOPAMIN!!!🤑
+- [] add multiple line rewards.
+  - Reason: DOPAMIN!!!🤑
+- [] create spin animations.
+  - Reason: DOPAMIN!!!🤑
 - [] ??? convert game to represent physically possible wheels
