@@ -1,1 +1,5 @@
-- use useReducer instead of state in SlotMachine
+- [x] use useReducer instead of states in SlotMachine
+- [] add diagonal rewards
+- [] add multiple line rewards
+- [] create spin animations
+- [] ??? convert game to represent physically possible wheels

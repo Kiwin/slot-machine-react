@@ -1,5 +1,5 @@
 import React from "react"
-import { PrizeTable } from "./PrizeLegend"
+import { PrizeTable } from "./PrizeTable"
 import { SlotMachine } from "./SlotMachine"
 
 /*   Ruleset: [[slot1,slot2,slot3, priceMultiplier] */

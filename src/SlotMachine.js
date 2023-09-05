@@ -1,84 +1,116 @@
 import React from "react"
-import { useState } from "react"
+import { useState, useReducer } from "react"
 import { SlotMachineDisplay } from "./SlotMachineDisplay"
 import { SlotMachineControls } from "./SlotMachineControls"
 
-export function SlotMachine({ ruleset, symbols }) {
-  const [squares, setSquares] = useState(randomizeSquares(Array(9).fill(null)))
-  const [bet, setBet] = useState(1)
-  const [credit, setCredit] = useState(100)
-  const [reward, setReward] = useState(0)
+const ACTION = Object.freeze({
+  handleBetChanged: "handleBetChanged",
+  handleSpin: "handleSpin",
+})
 
-  function handleBetChanged(newBet) {
-    if (newBet > credit) return
-    setBet(newBet)
+function randomizeSquares(squares, symbols) {
+  function getRandomSymbol() {
+    return symbols[Math.floor(Math.random() * symbols.length)]
   }
+  return squares.map(() => getRandomSymbol())
+}
 
-  function randomizeSquares(squares) {
-    function getRandomSymbol() {
-      return symbols[Math.floor(Math.random() * symbols.length)]
-    }
-    return squares.map(() => getRandomSymbol())
-  }
+function calculateRewardFromRules(squares, ruleset, bet) {
+  const lines = [
+    //horizontals
+    //[0, 1, 2],
+    [3, 4, 5],
+    //[6, 7, 8],
+    /*
+    //verticals
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    //diagonals
+    [0, 4, 8],
+    [2, 4, 6],
+    */
+  ]
 
-  function handleSpin() {
-    const creditsMinusBet = credit - bet
-    const hasEnoughCredits = creditsMinusBet > 0
-    if (!hasEnoughCredits) return
-
-    setCredit((credit) => credit - bet)
-    setSquares((squares) => randomizeSquares(squares))
-    setReward(() => calculateRewardFromRules(squares, ruleset, bet))
-    setCredit((credit) => credit + reward)
-  }
-
-  function calculateRewardFromRules(squares, ruleset, bet) {
-    const lines = [
-      //horizontals
-      //[0, 1, 2],
-      [3, 4, 5],
-      //[6, 7, 8],
-      /*
-      //verticals
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      //diagonals
-      [0, 4, 8],
-      [2, 4, 6],
-      */
-    ]
-
-    for (let i = 0; i < lines.length; i++) {
-      for (let j = 0; j < ruleset.length; j++) {
-        const [a, b, c] = lines[i]
-        const rule = ruleset[j]
-        if (
-          squares[a] == rule[0] &&
-          squares[b] == rule[1] &&
-          squares[c] == rule[2]
-        ) {
-          return bet * rule[3]
-        }
+  for (let i = 0; i < lines.length; i++) {
+    for (let j = 0; j < ruleset.length; j++) {
+      const [a, b, c] = lines[i]
+      const rule = ruleset[j]
+      if (
+        squares[a] == rule[0] &&
+        squares[b] == rule[1] &&
+        squares[c] == rule[2]
+      ) {
+        return bet * rule[3]
       }
     }
-    return 0
   }
+  return 0
+}
+
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
+
+function handleSpin(state) {
+  const creditsMinusBet = state.credit - state.bet
+  const hasEnoughCredits = creditsMinusBet >= 0
+  if (!hasEnoughCredits) return state // Nothing happends, return state.
+
+  state.credit -= state.bet
+  state.squares = randomizeSquares(state.squares, state.symbols)
+  state.reward = calculateRewardFromRules(
+    state.squares,
+    state.ruleset,
+    state.bet
+  )
+  state.credit += state.reward
+  return state
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case ACTION.handleBetChanged: {
+      console.log(state, action)
+      const notEnoughCreditToBet =
+        state.credit === 0 || action.bet > state.credit
+      if (notEnoughCreditToBet) return state
+      return { ...state, bet: action.bet }
+    }
+    case ACTION.handleSpin: {
+      const tempState = deepCopy(state)
+      const newState = handleSpin(tempState)
+      return { ...state, ...newState }
+    }
+  }
+  throw Error("Unknown action.")
+}
+
+export function SlotMachine({ ruleset, symbols }) {
+  const [state, dispatch] = useReducer(reducer, {
+    squares: randomizeSquares(Array(9).fill(null), symbols),
+    bet: 1,
+    credit: 100,
+    reward: 0,
+    ruleset: ruleset,
+    symbols: symbols,
+  })
 
   return (
     <React.Fragment>
       <SlotMachineDisplay
-        squares={squares}
-        bet={bet}
-        credit={credit}
-        reward={reward}
+        squares={state.squares}
+        bet={state.bet}
+        credit={state.credit}
+        reward={state.reward}
       />
       <SlotMachineControls
-        onSpin={(spinsToPerform) => {
-          handleSpin()
+        credit={state.credit}
+        onSpin={() => {
+          dispatch({ type: ACTION.handleSpin })
         }}
         onBetChange={(newBet) => {
-          handleBetChanged(newBet)
+          dispatch({ type: ACTION.handleBetChanged, bet: newBet })
         }}
       />
     </React.Fragment>

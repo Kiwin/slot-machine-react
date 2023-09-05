@@ -2,6 +2,7 @@ import React from "react"
 import { Square } from "./Square"
 
 export function SlotMachineDisplay({ squares, bet, credit, reward }) {
+  const hasAnyCredit = credit <= 0
   return (
     <div className="display">
       <div>
@@ -23,7 +24,7 @@ export function SlotMachineDisplay({ squares, bet, credit, reward }) {
       </div>
       <div className={bet > credit ? "error" : ""}>💰 {credit}</div>
       <div className={bet > credit ? "warning" : ""}>
-        BET: {"💲".repeat(bet)}
+        BET: {hasAnyCredit || bet === credit ? "💰" : "💲".repeat(bet)}
       </div>
       <div className={reward ? "highlight" : ""}>REWARD: {reward}</div>
     </div>
