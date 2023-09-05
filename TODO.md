@@ -1,0 +1,1 @@
+- use useReducer instead of state in SlotMachine

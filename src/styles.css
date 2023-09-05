@@ -98,18 +98,18 @@ body {
   display: table;
 }
 
-.prize-legend {
+.prize-table {
 }
 
-.prize-legend-table {
+.prize-table {
 }
 
-.prize-legend-row-header > td {
+.prize-table-row-header > td {
   border: 2px solid black;
   text-align: center;
 }
 
-.prize-legend-row:not(:first-child) > td {
+.prize-table-row:not(:first-child) > td {
   border-bottom: 1px dashed gray;
   text-align: center;
 }
